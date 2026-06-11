@@ -17,9 +17,9 @@
 <div
 	class="container mx-auto flex h-dvh flex-col gap-4 bg-background p-4 text-foreground transition-colors duration-300"
 >
-	<div class="flex flex-row items-center justify-center">
+	<div class="relative flex flex-row items-center justify-center">
 		<h1 class="flex-1 text-center text-4xl font-bold">Janety</h1>
-		<Button onclick={toggleMode} variant="outline" size="icon">
+		<Button onclick={toggleMode} variant="outline" size="icon" class="absolute right-0">
 			<Sun
 				class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all! dark:scale-0 dark:-rotate-90"
 			/>
