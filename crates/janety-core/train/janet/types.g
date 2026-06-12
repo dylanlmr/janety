@@ -1,0 +1,6 @@
+(:: + (-> number number number))
+(:: - (-> number number number))
+(:: * (-> number number number))
+(:: / (-> number number number))
+(:: = (-> number number boolean))
+(:: print (-> string nil))
