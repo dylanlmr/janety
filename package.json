@@ -8,10 +8,8 @@
     ]
   },
   "scripts": {
-    "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "format": "prettier --write .",
     "check-types": "turbo run check-types",
     "clean": "turbo run clean",
     "web:dev": "pnpm --filter web dev",
@@ -19,8 +17,10 @@
     "web:build": "pnpm --filter web build",
     "tauri:dev": "pnpm --filter native tauri dev",
     "tauri:build": "pnpm --filter native tauri build",
+    "tauri:build:portable": "pnpm --filter native tauri build --no-bundle",
     "tauri:android:dev": "pnpm --filter native tauri android dev",
-    "tauri:android:build": "pnpm --filter native tauri android build"
+    "tauri:android:build": "pnpm --filter native tauri android build",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "prettier": "^3.8.1",
