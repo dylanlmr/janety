@@ -2,16 +2,31 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Label } from '$lib/components/ui/label';
 	import { toggleMode, mode, systemPrefersMode } from 'mode-watcher';
-
 	import { Editor, janetLightTheme, janetDarkTheme } from '$lib/features/editor';
 	import { Moon, Sun } from '@lucide/svelte';
 
+	import { compileCode, type CompileResult } from '$lib/adapters/compiler';
+
 	let janetyText = $state('');
-
-	let janetText = $derived(!janetyText ? '' : janetyText.replace(/Janety/g, 'Janet'));
-
+	let janetText = $state('');
 	let currentMode = $derived(mode.current ?? systemPrefersMode.current ?? 'light');
 	let activeEditorTheme = $derived(currentMode === 'dark' ? janetDarkTheme : janetLightTheme);
+
+	$effect(() => {
+		if (!janetyText) {
+			janetText = '';
+			return;
+		}
+
+		compileCode(janetyText).then((result: CompileResult) => {
+			if (result.success && result.output) {
+				janetText = result.output;
+			} else {
+				janetText = '';
+				console.error('Erreurs:', result.type_errors, result.parse_errors);
+			}
+		});
+	});
 </script>
 
 <div
@@ -19,6 +34,7 @@
 >
 	<div class="relative flex flex-row items-center justify-center">
 		<h1 class="flex-1 text-center text-4xl font-bold">Janety</h1>
+
 		<Button onclick={toggleMode} variant="outline" size="icon" class="absolute right-0">
 			<Sun
 				class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all! dark:scale-0 dark:-rotate-90"
