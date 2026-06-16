@@ -11,6 +11,12 @@
 		"src/**/*.ts",
 		"src/**/*.svelte",
 
+		"../../packages/features/src/**/*.ts",
+		"../../packages/features/src/**/*.svelte",
+
+		"../../packages/state/src/**/*.ts",
+		"../../packages/state/src/**/*.svelte",
+
 		"../../packages/ui/src/**/*.ts",
 		"../../packages/ui/src/**/*.svelte"
 	],
