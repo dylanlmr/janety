@@ -1,0 +1,18 @@
+{
+	"extends": ["@repo/typescript-config/svelte.json", "./.svelte-kit/tsconfig.json"],
+	"compilerOptions": {},
+	"include": [
+		".svelte-kit/ambient.d.ts",
+		".svelte-kit/non-ambient.d.ts",
+		".svelte-kit/types/**/$types.d.ts",
+
+		"vite.config.ts",
+
+		"src/**/*.ts",
+		"src/**/*.svelte",
+
+		"../../packages/ui/src/**/*.ts",
+		"../../packages/ui/src/**/*.svelte"
+	],
+	"exclude": ["node_modules", "dist", "build", "src-tauri"]
+}

@@ -1,6 +1,0 @@
-[workspace]
-resolver = "2"
-members = [
-    "crates/janety-core",
-    "apps/native/src-tauri",
-]

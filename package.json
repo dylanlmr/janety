@@ -1,33 +1,30 @@
 {
-  "name": "janety",
-  "private": true,
-  "packageManager": "pnpm@10.0.0",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
-  },
-  "scripts": {
-    "build": "turbo run build",
-    "lint": "turbo run lint",
-    "check-types": "turbo run check-types",
-    "clean": "turbo run clean",
-    "web:dev": "pnpm --filter web dev",
-    "web:dev:host": "pnpm --filter web dev --host",
-    "web:build": "pnpm --filter web build",
-    "tauri:dev": "pnpm --filter native tauri dev",
-    "tauri:build": "pnpm --filter native tauri build",
-    "tauri:build:portable": "pnpm --filter native tauri build --no-bundle",
-    "tauri:android:dev": "pnpm --filter native tauri android dev",
-    "tauri:android:build": "pnpm --filter native tauri android build",
-    "format": "prettier --write ."
-  },
-  "devDependencies": {
-    "prettier": "^3.8.1",
-    "prettier-plugin-svelte": "^3.5.1",
-    "turbo": "^2.9.17"
-  },
-  "engines": {
-    "node": ">=18"
-  }
+	"name": "tauri-sveltekit-monorepo",
+	"private": true,
+	"scripts": {
+		"build": "pnpm -r run build",
+		"lint": "pnpm -r run lint",
+		"format": "prettier --write .",
+		"check-types": "pnpm -r run check-types",
+		"clean": "pnpm dlx rimraf@latest --glob \"**/node_modules\" \"**/.svelte-kit\" \"**/.vite\" \"**/dist\" \"**/build\"",
+		"nuke": "pnpm run clean && pnpm dlx rimraf@latest pnpm-lock.yaml && pnpm install",
+		"dev": "pnpm --filter web dev",
+		"dev:tauri": "pnpm --filter tauri dev",
+		"dev:all": "pnpm --filter web --filter tauri --parallel dev"
+	},
+	"devDependencies": {
+		"prettier": "^3.8.4",
+		"prettier-plugin-svelte": "^4.1.1",
+		"prettier-plugin-tailwindcss": "^0.8.0"
+	},
+	"packageManager": "pnpm@10.34.3",
+	"engines": {
+		"node": ">=24.0.0"
+	},
+	"pnpm": {
+		"overrides": {
+			"svelte": "^5.56.3",
+			"@sveltejs/vite-plugin-svelte": "^7.1.2"
+		}
+	}
 }
