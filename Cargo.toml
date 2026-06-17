@@ -1,0 +1,6 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/janety-core",
+    "apps/tauri/src-tauri",
+]

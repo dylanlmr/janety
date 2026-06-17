@@ -1,7 +1,10 @@
 <script lang="ts">
+	import ThemeWrapper from '@ui/components/theme/ThemeWrapper.svelte';
 	import './layout.css';
 
 	let { children } = $props();
 </script>
 
-{@render children()}
+<ThemeWrapper>
+	{@render children()}
+</ThemeWrapper>
