@@ -36,22 +36,22 @@
 	"dependencies": {
 		"@tailwindcss/forms": "^0.5.11",
 		"@tailwindcss/typography": "^0.5.20",
-		"mode-watcher": "^1.1.0",
-		"clsx": "^2.1.1",
-		"tailwind-merge": "^3.6.0",
-		"tailwind-variants": "^3.2.2",
-		"tw-animate-css": "^1.4.0"
+		"mode-watcher": "^1.1.0"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^2.1.0",
 		"@eslint/js": "^10.0.1",
 		"@fontsource-variable/inter": "^5.2.8",
-		"@lucide/svelte": "^1.20.0",
+		"@internationalized/date": "^3.12.2",
+		"@lucide/svelte": "^1.21.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"@sveltejs/vite-plugin-svelte": "^7.1.2",
+		"@tailwindcss/vite": "^4.3.1",
 		"@types/node": "^24.13.2",
 		"@vitest/browser-playwright": "^4.1.8",
+		"bits-ui": "^2.18.1",
+		"clsx": "^2.1.1",
 		"eslint": "^10.5.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.19.0",
@@ -63,9 +63,13 @@
 		"shadcn-svelte": "^1.3.0",
 		"svelte": "^5.56.3",
 		"svelte-check": "^4.6.0",
+		"tailwind-merge": "^3.6.0",
+		"tailwind-variants": "^3.2.2",
 		"tailwindcss": "^4.3.1",
+		"tw-animate-css": "^1.4.0",
 		"typescript": "^6.0.3",
 		"typescript-eslint": "^8.61.0",
+		"vite": "^8.0.16",
 		"vitest": "^4.1.8",
 		"vitest-browser-svelte": "^2.1.1"
 	}

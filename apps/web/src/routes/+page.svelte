@@ -1,5 +1,5 @@
 <script lang="ts">
-	import HomeScreen from '@features/home/screens/HomeScreen.svelte';
+	import HomeScreen from '#features/home/HomeScreen.svelte';
 </script>
 
 <HomeScreen />

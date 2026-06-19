@@ -16,9 +16,9 @@ const config = {
 			fallback: 'index.html'
 		}),
 		alias: {
-			'@features': '../../packages/features/src',
-			'@state': '../../packages/state/src',
-			'@ui': '../../packages/ui/src'
+			'#features': '../../packages/features/src',
+			'#state': '../../packages/state/src',
+			'#ui': '../../packages/ui/src'
 		}
 	}
 };
