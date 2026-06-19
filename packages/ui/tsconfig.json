@@ -1,11 +1,6 @@
 {
 	"extends": "@repo/typescript-config/svelte.json",
-	"compilerOptions": {
-		"paths": {
-			"$ui": ["./src/"],
-			"$ui/*": ["./src/*"]
-		}
-	},
-	"include": ["src/**/*", "src/**/*.svelte"],
+	"compilerOptions": {},
+	"include": ["src/**/*.ts", "src/**/*.svelte"],
 	"exclude": ["node_modules"]
 }

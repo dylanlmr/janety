@@ -13,6 +13,12 @@
 		"target": "esnext",
 		"verbatimModuleSyntax": true,
 		"isolatedModules": true,
-		"lib": ["esnext", "DOM", "DOM.Iterable"]
+		"lib": ["esnext", "DOM", "DOM.Iterable"],
+
+		"paths": {
+			"@ui/*": ["../ui/src/*"],
+			"@state/*": ["../state/src/*"],
+			"@features/*": ["../features/src/*"]
+		}
 	}
 }
