@@ -4,7 +4,7 @@
 	import { EditorView, basicSetup } from 'codemirror';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import type { ClassValue } from 'clsx';
-	import { cn, type WithoutChildren } from '@ui/utils';
+	import { cn, type WithoutChildren } from '#ui/utils';
 
 	type Props = WithoutChildren<HTMLAttributes<HTMLDivElement>> & {
 		class?: ClassValue;

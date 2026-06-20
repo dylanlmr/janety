@@ -1,10 +1,9 @@
 <script lang="ts">
-	import ThemeWrapper from '@ui/components/theme/ThemeWrapper.svelte';
 	import './layout.css';
+	import { ModeWatcher } from 'mode-watcher';
 
 	let { children } = $props();
 </script>
 
-<ThemeWrapper>
-	{@render children()}
-</ThemeWrapper>
+<ModeWatcher />
+{@render children()}
