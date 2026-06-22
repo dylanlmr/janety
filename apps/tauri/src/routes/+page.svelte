@@ -1,30 +1,10 @@
 <script lang="ts">
-	import type { CompileResult } from '#core/compiler/types';
-	import Workspace from '#features/workspace/workspace.svelte';
+	import JanetyPlayground from '#features/janety-playground/janety-playground.svelte';
 	import ThemeToggle from '#ui/components/theme-toggle.svelte';
-	import { compileCode } from '$lib/compiler';
+	import { compiler } from '$lib/compiler';
 	import { mode, systemPrefersMode } from 'mode-watcher';
 
 	let isDark = $derived((mode.current ?? systemPrefersMode ?? 'light') === 'dark');
-
-	let janetyText = $state('');
-	let janetText = $state('');
-
-	$effect(() => {
-		if (!janetyText) {
-			janetText = '';
-			return;
-		}
-
-		compileCode(janetyText).then((result: CompileResult) => {
-			if (result.success && result.output) {
-				janetText = result.output;
-			} else {
-				janetText = '';
-				console.error('Erreurs:', result.type_errors, result.parse_errors);
-			}
-		});
-	});
 </script>
 
 <div
@@ -36,6 +16,6 @@
 	</header>
 
 	<main class="flex min-h-0 flex-1 flex-col">
-		<Workspace bind:janetyText {janetText} {isDark} />
+		<JanetyPlayground {compiler} {isDark} />
 	</main>
 </div>

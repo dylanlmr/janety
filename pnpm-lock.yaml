@@ -284,6 +284,9 @@ importers:
 
   packages/features:
     dependencies:
+      '@repo/core':
+        specifier: workspace:*
+        version: link:../core
       '@repo/state':
         specifier: workspace:*
         version: link:../state

@@ -2,14 +2,30 @@
 	import Label from '#ui/components/ui/label/label.svelte';
 	import Editor from '#ui/components/editor/editor.svelte';
 	import { janetDarkTheme, janetLightTheme } from '#ui/components/editor/themes/janetTheme';
+	import type { CompileResult, JanetyCompiler } from '#core/compiler/types';
 
-	let {
-		janetyText = $bindable(),
-		janetText,
-		isDark = false
-	}: { janetyText: string; janetText: string; isDark?: boolean } = $props();
+	let { compiler, isDark = false }: { compiler: JanetyCompiler; isDark?: boolean } = $props();
 
 	let activeEditorTheme = $derived(isDark ? janetDarkTheme : janetLightTheme);
+
+	let janetyText = $state('');
+	let janetText = $state('');
+
+	$effect(() => {
+		if (!janetyText) {
+			janetText = '';
+			return;
+		}
+
+		compiler.compile(janetyText).then((result: CompileResult) => {
+			if (result.success && result.output) {
+				janetText = result.output;
+			} else {
+				janetText = '';
+				console.error('Erreurs:', result.type_errors, result.parse_errors);
+			}
+		});
+	});
 </script>
 
 <div class="flex h-full w-full flex-col gap-4 md:flex-row">
