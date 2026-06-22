@@ -2,6 +2,10 @@
 	import { untrack } from 'svelte';
 	import { EditorState, Compartment, type Extension } from '@codemirror/state';
 	import { EditorView, basicSetup } from 'codemirror';
+	import { keymap } from '@codemirror/view';
+	import { indentWithTab } from '@codemirror/commands';
+	import { clojure } from '@nextjournal/lang-clojure';
+	import { shadcnCodeMirrorTheme } from './cm-theme';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import type { ClassValue } from 'clsx';
 	import { cn, type WithoutChildren } from '#ui/utils';
@@ -27,10 +31,19 @@
 	let view = $state<EditorView>();
 	const extensionsCompartment = new Compartment();
 
+	const fontSizeTheme = EditorView.theme({
+		'&': {
+			fontSize: '16px'
+		}
+	});
+
 	let activeExtensions = $derived([
+		keymap.of([indentWithTab]),
 		...extensions,
-		EditorState.readOnly.of(readonly),
-		EditorView.editable.of(!readonly)
+		fontSizeTheme,
+		clojure(),
+		shadcnCodeMirrorTheme,
+		EditorState.readOnly.of(readonly)
 	]);
 
 	$effect(() => {

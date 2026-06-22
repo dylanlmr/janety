@@ -437,9 +437,18 @@ importers:
       '@codemirror/view':
         specifier: ^6.43.0
         version: 6.43.1
+      '@fontsource-variable/jetbrains-mono':
+        specifier: ^5.2.8
+        version: 5.2.8
+      '@lezer/highlight':
+        specifier: ^1.2.3
+        version: 1.2.3
       '@lucide/svelte':
         specifier: ^1.21.0
         version: 1.21.0(svelte@5.56.3(@typescript-eslint/types@8.61.1))
+      '@nextjournal/lang-clojure':
+        specifier: ^1.0.0
+        version: 1.0.0
       '@tailwindcss/forms':
         specifier: ^0.5.11
         version: 0.5.11(tailwindcss@4.3.1)
@@ -652,6 +661,9 @@ packages:
   '@fontsource-variable/inter@5.2.8':
     resolution: {integrity: sha512-kOfP2D+ykbcX/P3IFnokOhVRNoTozo5/JxhAIVYLpea/UBmCQ/YWPBfWIDuBImXX/15KH+eKh4xpEUyS2sQQGQ==}
 
+  '@fontsource-variable/jetbrains-mono@5.2.8':
+    resolution: {integrity: sha512-WBA9elru6Jdp5df2mES55wuOO0WIrn3kpXnI4+W2ek5u3ZgLS9XS4gmIlcQhiZOWEKl95meYdvK7xI+ETLCq/Q==}
+
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
     engines: {node: '>=18.18.0'}
@@ -713,6 +725,12 @@ packages:
     peerDependencies:
       '@emnapi/core': ^1.7.1
       '@emnapi/runtime': ^1.7.1
+
+  '@nextjournal/lang-clojure@1.0.0':
+    resolution: {integrity: sha512-gOCV71XrYD0DhwGoPMWZmZ0r92/lIHsqQu9QWdpZYYBwiChNwMO4sbVMP7eTuAqffFB2BTtCSC+1skSH9d3bNg==}
+
+  '@nextjournal/lezer-clojure@1.0.0':
+    resolution: {integrity: sha512-VZyuGu4zw5mkTOwQBTaGVNWmsOZAPw5ZRxu1/Knk/Xfs7EDBIogwIs5UXTYkuECX5ZQB8eOB+wKA2pc7VyqaZQ==}
 
   '@oxc-project/types@0.133.0':
     resolution: {integrity: sha512-KzkdCd6Uxqnf6l3HOw1xfatAlUURA0g14cvBYFyJ5SaNOQbOUvBr9PKArcPcrNIeRsBdgcUzOGrhKveVpvOIGA==}
@@ -2340,6 +2358,8 @@ snapshots:
 
   '@fontsource-variable/inter@5.2.8': {}
 
+  '@fontsource-variable/jetbrains-mono@5.2.8': {}
+
   '@humanfs/core@0.19.2':
     dependencies:
       '@humanfs/types': 0.15.0
@@ -2401,6 +2421,15 @@ snapshots:
       '@emnapi/runtime': 1.10.0
       '@tybys/wasm-util': 0.10.2
     optional: true
+
+  '@nextjournal/lang-clojure@1.0.0':
+    dependencies:
+      '@codemirror/language': 6.12.3
+      '@nextjournal/lezer-clojure': 1.0.0
+
+  '@nextjournal/lezer-clojure@1.0.0':
+    dependencies:
+      '@lezer/lr': 1.4.10
 
   '@oxc-project/types@0.133.0': {}
 
