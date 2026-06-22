@@ -3,10 +3,11 @@
 	import Editor from '#ui/components/editor/editor.svelte';
 	import { janetDarkTheme, janetLightTheme } from '#ui/components/editor/themes/janetTheme';
 
-	let { isDark = false }: { isDark?: boolean } = $props();
-
-	let janetyText = $state('');
-	let janetText = $state('');
+	let {
+		janetyText = $bindable(),
+		janetText,
+		isDark = false
+	}: { janetyText: string; janetText: string; isDark?: boolean } = $props();
 
 	let activeEditorTheme = $derived(isDark ? janetDarkTheme : janetLightTheme);
 </script>

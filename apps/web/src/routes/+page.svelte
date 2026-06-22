@@ -1,9 +1,29 @@
 <script lang="ts">
 	import Workspace from '#features/workspace/workspace.svelte';
 	import ThemeToggle from '#ui/components/theme-toggle.svelte';
+	import { compileCode, type CompileResult } from '$lib/compiler';
 	import { mode, systemPrefersMode } from 'mode-watcher';
 
 	let isDark = $derived((mode.current ?? systemPrefersMode ?? 'light') === 'dark');
+
+	let janetyText = $state('');
+	let janetText = $state('heyyyy');
+
+	$effect(() => {
+		if (!janetyText) {
+			janetText = '';
+			return;
+		}
+
+		compileCode(janetyText).then((result: CompileResult) => {
+			if (result.success && result.output) {
+				janetText = result.output;
+			} else {
+				janetText = '';
+				console.error('Erreurs:', result.type_errors, result.parse_errors);
+			}
+		});
+	});
 </script>
 
 <div
@@ -15,6 +35,6 @@
 	</header>
 
 	<main class="flex min-h-0 flex-1 flex-col">
-		<Workspace {isDark} />
+		<Workspace bind:janetyText {janetText} {isDark} />
 	</main>
 </div>

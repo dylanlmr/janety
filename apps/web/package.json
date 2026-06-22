@@ -11,7 +11,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"build:wasm": "cd ../../crates/janety-core && wasm-pack build --target web --out-dir ../../apps/web/src/lib/wasm --features wasm"
 	},
 	"dependencies": {
 		"@repo/state": "workspace:*",
