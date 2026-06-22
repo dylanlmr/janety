@@ -10,9 +10,9 @@ export default defineConfig({
 		}
 	},
 	ssr: {
-		noExternal: ['@repo/features', '@repo/state', '@repo/ui']
+		noExternal: ['@repo/core', '@repo/features', '@repo/state', '@repo/ui']
 	},
 	optimizeDeps: {
-		exclude: ['@repo/features', '@repo/state', '@repo/ui']
+		exclude: ['@repo/core', '@repo/features', '@repo/state', '@repo/ui']
 	}
 });

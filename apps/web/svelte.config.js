@@ -10,6 +10,7 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		alias: {
+			'#core': '../../packages/core/src',
 			'#features': '../../packages/features/src',
 			'#state': '../../packages/state/src',
 			'#ui': '../../packages/ui/src'

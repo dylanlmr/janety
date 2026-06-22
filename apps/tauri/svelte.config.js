@@ -16,6 +16,7 @@ const config = {
 			fallback: 'index.html'
 		}),
 		alias: {
+			'#core': '../../packages/core/src',
 			'#features': '../../packages/features/src',
 			'#state': '../../packages/state/src',
 			'#ui': '../../packages/ui/src'

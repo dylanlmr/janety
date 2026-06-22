@@ -33,6 +33,6 @@ export default defineConfig(async () => ({
 		}
 	},
 	optimizeDeps: {
-		exclude: ['@repo/features', '@repo/state', '@repo/ui']
+		exclude: ['@repo/core', '@repo/features', '@repo/state', '@repo/ui']
 	}
 }));

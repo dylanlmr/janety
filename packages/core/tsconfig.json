@@ -1,0 +1,11 @@
+{
+	"extends": "@repo/typescript-config/svelte.json",
+	"compilerOptions": {
+		"paths": {
+			"#core": ["../core/src"],
+			"#core/*": ["../core/src/*"]
+		}
+	},
+	"include": ["src/**/*.ts", "src/**/*.svelte"],
+	"exclude": ["node_modules"]
+}

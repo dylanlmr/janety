@@ -15,6 +15,7 @@
 		"build:wasm": "cd ../../crates/janety-core && wasm-pack build --target web --out-dir ../../apps/web/src/lib/wasm --features wasm"
 	},
 	"dependencies": {
+		"@repo/core": "workspace:*",
 		"@repo/state": "workspace:*",
 		"@repo/ui": "workspace:*",
 		"mode-watcher": "^1.1.0"

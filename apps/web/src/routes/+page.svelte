@@ -1,13 +1,14 @@
 <script lang="ts">
+	import type { CompileResult } from '#core/compiler/types';
 	import Workspace from '#features/workspace/workspace.svelte';
 	import ThemeToggle from '#ui/components/theme-toggle.svelte';
-	import { compileCode, type CompileResult } from '$lib/compiler';
+	import { compileCode } from '$lib/compiler';
 	import { mode, systemPrefersMode } from 'mode-watcher';
 
 	let isDark = $derived((mode.current ?? systemPrefersMode ?? 'light') === 'dark');
 
 	let janetyText = $state('');
-	let janetText = $state('heyyyy');
+	let janetText = $state('');
 
 	$effect(() => {
 		if (!janetyText) {
