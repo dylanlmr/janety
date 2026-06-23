@@ -1,10 +1,5 @@
+use janety_core::{parser::file_parser, run, semantics, transpiler};
 use chumsky::Parser;
-
-mod ast;
-mod parser;
-mod result;
-mod semantics;
-mod transpiler;
 
 fn test_top_level_parsing() {
     let input = r#"
@@ -18,7 +13,7 @@ fn test_top_level_parsing() {
             (defn map-num [f l]
               (if (empty? l)
                 []
-                (cons (f (first l)) (map-num f (slice l 1)))))
+                (tuple (f (first l)) (map-num f (slice l 1)))))
 
             (:: add (-> number number number))
             (defn add [x y]
@@ -35,9 +30,13 @@ fn test_top_level_parsing() {
             (:: process-more (-> [number] [number]))
             (defn process-more [l]
               (map-num (add 42) l))
+
+            (print (process-data [1 2 3 4 5]))
+            (print (process-more [1 2 3 4 5]))
+            
+            (+ 1 (+ 2 (+ 3 (+ 4 5))))
         "#;
 
-    use crate::parser::file_parser;
     let parser = file_parser();
     let result = parser.parse(input);
 
@@ -53,6 +52,26 @@ fn test_top_level_parsing() {
                 let janet_code = transpiler::transpile(&ast);
                 println!("Generated Janet code : \n");
                 println!("{}", janet_code);
+
+                let resultat = run(&janet_code, "main");
+                
+                println!("\n=== RÉSULTAT CAPTURÉ PAR RUST ===");
+                println!("Succès : {}", resultat.success);
+                
+                println!("\n[CONSOLE VIRTUELLE (ce qui a été imprimé via pp)]");
+                if resultat.console_output.is_empty() {
+                    println!("(Vide)");
+                } else {
+                    println!("{}", resultat.console_output);
+                }
+
+                println!("\n[VALEUR DE RETOUR (La dernière ligne évaluée)]");
+                if let Some(valeur) = resultat.output {
+                    println!("--{}--", valeur);
+                } else {
+                    println!("(Aucune valeur retournée)");
+                }
+                println!("=================================\n");
             }
         }
         Err(e) => println!("Parse Error: {:?}", e),
