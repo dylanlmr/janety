@@ -1,6 +1,20 @@
 use super::env::TypeEnv;
 use crate::ast::{Expr, TopLevel, Type};
 
+fn is_compatible(t1: &Type, t2: &Type) -> bool {
+    if *t1 == Type::Named("any".into()) || *t2 == Type::Named("any".into()) {
+        return true;
+    }
+    match (t1, t2) {
+        (Type::Named(n1), Type::Named(n2)) => n1 == n2,
+        (Type::List(l1), Type::List(l2)) => is_compatible(l1, l2),
+        (Type::Func(a1, r1), Type::Func(a2, r2)) => {
+            is_compatible(a1, a2) && is_compatible(r1, r2)
+        }
+        _ => false,
+    }
+}
+
 pub fn check_types(ast: &[TopLevel]) -> Result<(), Vec<String>> {
     let mut env = TypeEnv::new();
     let mut errors: Vec<String> = Vec::new();
@@ -18,36 +32,43 @@ pub fn check_types(ast: &[TopLevel]) -> Result<(), Vec<String>> {
     env.insert(
         "first".into(),
         Type::Func(
-            Box::new(Type::List(Box::new(Type::Named("number".into())))),
-            Box::new(Type::Named("number".into())),
+            Box::new(Type::List(Box::new(Type::Named("any".into())))),
+            Box::new(Type::Named("any".into())),
         ),
     );
     env.insert(
         "slice".into(),
         Type::Func(
-            Box::new(Type::List(Box::new(Type::Named("number".into())))),
+            Box::new(Type::List(Box::new(Type::Named("any".into())))),
             Box::new(Type::Func(
                 Box::new(Type::Named("number".into())),
-                Box::new(Type::List(Box::new(Type::Named("number".into())))),
+                Box::new(Type::List(Box::new(Type::Named("any".into())))),
             )),
         ),
     );
     env.insert(
         "empty?".into(),
         Type::Func(
-            Box::new(Type::List(Box::new(Type::Named("number".into())))),
+            Box::new(Type::List(Box::new(Type::Named("any".into())))),
             Box::new(Type::Named("boolean".into())),
         ),
     );
     env.insert(
-        "cons".into(),
+        "tuple".into(),
         Type::Func(
-            Box::new(Type::Named("number".into())),
+            Box::new(Type::Named("any".into())),
             Box::new(Type::Func(
-                Box::new(Type::List(Box::new(Type::Named("number".into())))),
-                Box::new(Type::List(Box::new(Type::Named("number".into())))),
+                Box::new(Type::List(Box::new(Type::Named("any".into())))),
+                Box::new(Type::List(Box::new(Type::Named("any".into())))),
             )),
         ),
+    );
+    env.insert(
+        "print".into(), 
+        Type::Func(
+            Box::new(Type::Named("any".into())),
+            Box::new(Type::Named("any".into())),
+        )
     );
 
     for decl in ast {
@@ -57,16 +78,25 @@ pub fn check_types(ast: &[TopLevel]) -> Result<(), Vec<String>> {
     }
 
     for decl in ast {
+        if let TopLevel::Defn { name, .. } = decl {
+            if env.get(name).is_none() {
+                env.insert(name.clone(), Type::Named("any".into()));
+            }
+        }
+    }
+
+    let has_signature = |fn_name: &str| -> bool {
+        ast.iter().any(|d| matches!(d, TopLevel::TypeSignature { name, .. } if name == fn_name))
+    };
+
+    for decl in ast {
         match decl {
             TopLevel::Defn { name, body } => {
-                let signature = env.get(name).cloned();
-
-                if let Some(expected_ty) = signature {
+                if has_signature(name) {
+                    let expected_ty = env.get(name).unwrap().clone();
                     if let Err(e) = check_expr(body, &mut env, &expected_ty) {
                         errors.push(format!("In function '{}': {}", name, e));
                     }
-                } else {
-                    errors.push(format!("Function '{}' lacks a type signature (::)", name));
                 }
             }
             TopLevel::Expr(expr) => {
@@ -86,6 +116,10 @@ pub fn check_types(ast: &[TopLevel]) -> Result<(), Vec<String>> {
 }
 
 fn check_expr(expr: &Expr, env: &mut TypeEnv, expected: &Type) -> Result<(), String> {
+    if *expected == Type::Named("any".into()) {
+        return Ok(());
+    }
+
     match expr {
         Expr::Lambda(arg_name, body) => {
             if let Type::Func(arg_ty, ret_ty) = expected {
@@ -126,14 +160,14 @@ fn check_expr(expr: &Expr, env: &mut TypeEnv, expected: &Type) -> Result<(), Str
         }
         _ => {
             let inferred = infer_expr(expr, env)?;
-            if inferred != *expected {
+            if is_compatible(expected, &inferred) {
+                Ok(())
+            } else {
                 Err(format!(
                     "Type mismatch: expected '{}', but inferred '{}'",
                     format_type(expected),
                     format_type(&inferred)
                 ))
-            } else {
-                Ok(())
             }
         }
     }
@@ -147,36 +181,44 @@ fn infer_expr(expr: &Expr, env: &mut TypeEnv) -> Result<Type, String> {
             .get(name)
             .cloned()
             .ok_or_else(|| format!("Unknown symbol: '{}'", name)),
-        Expr::Lambda(_, _) => Err("Cannot infer type of an unannotated lambda.".into()),
+        Expr::Lambda(_, _) => Ok(Type::Named("any".into())),
         Expr::List(items) => {
             if items.is_empty() {
                 Ok(Type::List(Box::new(Type::Named("any".into()))))
             } else {
-                let first_ty = infer_expr(&items[0], env)?;
-                for (i, item) in items.iter().enumerate().skip(1) {
+                let mut inferred_type = Type::Named("any".into());
+                for (i, item) in items.iter().enumerate() {
                     let ty = infer_expr(item, env)?;
-                    if ty != first_ty {
-                        return Err(format!(
-                            "Heterogeneous list at index {}: '{}' vs '{}'",
-                            i,
-                            format_type(&first_ty),
-                            format_type(&ty)
-                        ));
+                    if ty != Type::Named("any".into()) {
+                        if inferred_type == Type::Named("any".into()) {
+                            inferred_type = ty.clone();
+                        } else if !is_compatible(&inferred_type, &ty) {
+                            return Err(format!(
+                                "Heterogeneous list at index {}: '{}' vs '{}'",
+                                i,
+                                format_type(&inferred_type),
+                                format_type(&ty)
+                            ));
+                        }
                     }
                 }
-                Ok(Type::List(Box::new(first_ty)))
+                Ok(Type::List(Box::new(inferred_type)))
             }
         }
         Expr::Call(func, arg) => {
             let func_ty = infer_expr(func, env)?;
-            if let Type::Func(arg_ty, ret_ty) = func_ty {
-                check_expr(arg, env, &arg_ty)?;
-                Ok(*ret_ty)
-            } else {
-                Err(format!(
+            match func_ty {
+                Type::Func(arg_ty, ret_ty) => {
+                    check_expr(arg, env, &arg_ty)?;
+                    Ok(*ret_ty)
+                }
+                Type::Named(name) if name == "any" => {
+                    Ok(Type::Named("any".into()))
+                }
+                _ => Err(format!(
                     "Calling a non-function, found '{}'",
                     format_type(&func_ty)
-                ))
+                )),
             }
         }
         Expr::If {
@@ -187,14 +229,18 @@ fn infer_expr(expr: &Expr, env: &mut TypeEnv) -> Result<Type, String> {
             check_expr(cond, env, &Type::Named("boolean".into()))?;
             let t1 = infer_expr(then_branch, env)?;
             let t2 = infer_expr(else_branch, env)?;
-            if t1 != t2 {
+            if is_compatible(&t1, &t2) {
+                if t1 != Type::Named("any".into()) {
+                    Ok(t1)
+                } else {
+                    Ok(t2)
+                }
+            } else {
                 Err(format!(
                     "If branches mismatch: '{}' vs '{}'",
                     format_type(&t1),
                     format_type(&t2)
                 ))
-            } else {
-                Ok(t1)
             }
         }
     }
