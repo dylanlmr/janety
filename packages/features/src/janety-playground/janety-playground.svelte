@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { CompileResult, JanetyCompiler } from '#core/compiler/types';
+	import type { JanetyCompiler, JanetyResult } from '#core/compiler/types';
 	import Editor from '#ui/components/editor/editor.svelte';
 	import { janetDarkTheme, janetLightTheme } from '#ui/components/editor/themes/janetTheme';
 	import { Label } from '#ui/components/ui/label';
@@ -8,47 +8,63 @@
 
 	let activeEditorTheme = $derived(isDark ? janetDarkTheme : janetLightTheme);
 
-	let janetyText = $state('');
-	let janetText = $state('');
-	let hasError = $state(false);
+	let sourceCode = $state('');
+	let transpiledCode = $state('');
+	let result = $state<JanetyResult | null>(null);
+
+	let hasError = $derived(result !== null && !result.success);
+
+	let displayText = $derived.by(() => {
+		if (!result) return '';
+
+		if (!result.success) return result.errors.join('\n');
+
+		let text = `# --- Transpiled Janet Code ---\n${transpiledCode}\n\n`;
+
+		if (result.console_output) {
+			text += `# --- Console Output ---\n${result.console_output}\n\n`;
+		}
+
+		text += `# --- Execution Return ---\n${result.output || 'nil'}`;
+
+		return text.trim();
+	});
 
 	$effect(() => {
-		if (!janetyText) {
-			janetText = '';
-			hasError = false;
+		if (!sourceCode) {
+			transpiledCode = '';
+			result = null;
 			return;
 		}
 
-		compiler.compile(janetyText).then((result: CompileResult) => {
-			if (result.success && result.output) {
-				janetText = result.output;
-				hasError = false;
-			} else {
-				janetText =
-					result.parse_errors.join('\n') ||
-					result.type_errors.join('\n') ||
-					'Erreur de compilation.';
-				hasError = true;
+		compiler.compile_code(sourceCode).then((compRes) => {
+			if (!compRes.success || !compRes.output) {
+				transpiledCode = '';
+				result = compRes;
+				return;
 			}
+
+			transpiledCode = compRes.output;
+
+			compiler.run_code(transpiledCode).then((runRes) => {
+				result = runRes;
+			});
 		});
 	});
 </script>
 
 <div class="flex h-full w-full flex-col gap-6 md:flex-row">
 	<div
-		class="group flex min-h-0 flex-1 flex-col overflow-hidden rounded-sm border border-border bg-background/80 shadow-sm backdrop-blur-md transition-all duration-300 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/50 hover:border-border/80"
+		class="group flex min-h-0 flex-1 flex-col overflow-hidden rounded-sm border border-border bg-background/80 shadow-sm transition-all duration-300 focus-within:border-primary"
 	>
 		<div
 			class="flex shrink-0 items-center justify-between border-b border-border/50 bg-muted/20 px-4 py-2"
 		>
 			<div class="flex items-center gap-3">
 				<div
-					class="h-2 w-2 rounded-full bg-muted-foreground/30 transition-colors duration-300 group-focus-within:bg-primary group-focus-within:shadow-[0_0_8px_var(--primary)]"
+					class="h-2 w-2 rounded-full bg-muted-foreground/30 group-focus-within:bg-primary"
 				></div>
-				<Label
-					for="janety-editor"
-					class="cursor-pointer font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground group-focus-within:text-primary"
-				>
+				<Label class="font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground">
 					src/main.jty
 				</Label>
 			</div>
@@ -56,21 +72,17 @@
 				>Input</span
 			>
 		</div>
-
-		<div class="flex min-h-0 flex-1 flex-col bg-transparent">
-			<Editor
-				bind:value={janetyText}
-				id="janety-editor"
-				extensions={[activeEditorTheme]}
-				class="h-full w-full flex-1 font-mono text-sm outline-none"
-			/>
-		</div>
+		<Editor
+			bind:value={sourceCode}
+			extensions={[activeEditorTheme]}
+			class="h-full w-full flex-1 font-mono text-sm outline-none"
+		/>
 	</div>
 
 	<div
-		class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-sm border shadow-sm backdrop-blur-md {hasError
+		class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-sm border shadow-sm transition-colors duration-300 {hasError
 			? 'border-destructive/50 bg-destructive/5'
-			: 'border-border bg-muted/10'} transition-colors duration-300"
+			: 'border-border bg-muted/10'}"
 	>
 		<div
 			class="flex shrink-0 items-center justify-between border-b border-border/50 px-4 py-2 {hasError
@@ -80,18 +92,15 @@
 			<div class="flex items-center gap-3">
 				<div
 					class="h-2 w-2 rounded-full transition-colors duration-300 {hasError
-						? 'bg-destructive shadow-[0_0_8px_var(--destructive)]'
-						: janetText
-							? 'bg-primary'
-							: 'bg-muted-foreground/30'}"
+						? 'bg-destructive'
+						: 'bg-primary'}"
 				></div>
 				<Label
-					for="janet-editor"
 					class="font-mono text-xs font-bold uppercase tracking-wider {hasError
 						? 'text-destructive'
 						: 'text-muted-foreground'}"
 				>
-					out/main.janet
+					{hasError ? 'Error Output' : 'Transpiled & Execution'}
 				</Label>
 			</div>
 			<span class="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/50"
@@ -99,16 +108,13 @@
 			>
 		</div>
 
-		<div class="flex min-h-0 flex-1 flex-col bg-transparent opacity-90">
-			<Editor
-				value={janetText}
-				readonly={true}
-				id="janet-editor"
-				extensions={[activeEditorTheme]}
-				class="h-full w-full flex-1 font-mono text-sm outline-none {hasError
-					? 'text-destructive'
-					: ''}"
-			/>
-		</div>
+		<Editor
+			value={displayText}
+			readonly={true}
+			extensions={[activeEditorTheme]}
+			class="h-full w-full flex-1 font-mono text-sm outline-none {hasError
+				? 'text-destructive'
+				: ''}"
+		/>
 	</div>
 </div>
