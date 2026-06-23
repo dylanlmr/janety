@@ -1,8 +1,7 @@
 use wasm_bindgen::prelude::*;
-
-use crate::CompileResult;
+use crate::JanetyResult;
 
 #[wasm_bindgen]
-pub fn compile(code: &str) -> CompileResult {
+pub fn compile(code: &str) -> JanetyResult {
     crate::compile(code)
 }
