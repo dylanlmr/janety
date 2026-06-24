@@ -19,6 +19,8 @@ It combines a **Rust compiler core**, a **Janet execution engine**, **WebAssembl
 ![WASM](https://img.shields.io/badge/WebAssembly-ready-purple)
 ![PNPM](https://img.shields.io/badge/PNPM-monorepo-yellow?logo=pnpm)
 
+![App preview](app-preview.png)
+
 </div>
 
 ---
