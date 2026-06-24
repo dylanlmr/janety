@@ -183,15 +183,15 @@ The monorepo is optimized for:
 
 ```text
                            ┌─────────────────────┐
-                           │     Applications    │
+                           │    Applications     │
                            │                     │
-                           │  Web     Desktop    │
+                           │ Web         Desktop │
                            └──────────┬──────────┘
                                       │
-                     ┌────────────────┴──────────────┐
-                     │                               │
-             ┌───────▼────────┐             ┌────────▼────────┐
-             │ Shared Packages │             │  Janety Core    │
+                     ┌────────────────┴───────────────┐
+                     │                                │
+             ┌───────▼─────────┐             ┌────────▼─────────┐
+             │ Shared Packages │             │ Janety Core      │
              │                 │             │                  │
              │ UI              │             │ Compiler         │
              │ Features        │             │ Semantics        │
